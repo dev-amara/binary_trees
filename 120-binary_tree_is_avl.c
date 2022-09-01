@@ -1,65 +1,64 @@
 #include "binary_trees.h"
+#include "102-binary_tree_is_complete.c"
 
 /**
- * binary_tree_is_avl - finds if a binary tree is an avl
- * @tree: pointer to the root node of the tree
- *
- * Return: 1 if tree is avl
- *         0 otherwise
- */
-int binary_tree_is_avl(const binary_tree_t *tree)
+* num_check - todo.
+* @tree: todo.
+* @n: todo.
+* @flag: 0 to compare left, 1 to compare right.
+* Return: todo.
+*/
+int num_check(const binary_tree_t *tree, int n, int flag)
 {
-	if (!tree)
-		return (0);
-
-	return (btia_helper(tree, INT_MIN, INT_MAX));
-}
-
-/**
- * btia_helper - helper that finds if a binary tree is an avl
- * @tree: pointer to the root node of the tree
- * @min: minimum value
- * @max: maximum value
- *
- * Return: 1 if tree is avl
- *         0 otherwise
- */
-int btia_helper(const binary_tree_t *tree, int min, int max)
-{
-	int path_l, path_r;
+	int izq, der;
 
 	if (!tree)
 		return (1);
-	if (tree->n < min || tree->n > max)
-		return (0);
-
-	path_l = tree->left ? 1 + binary_tree_height(tree->left) : 0;
-	path_r = tree->right ? 1 + binary_tree_height(tree->right) : 0;
-
-	if (abs(path_l - path_r) > 1)
-		return (0);
-
-	return (btia_helper(tree->left, min, tree->n - 1) &&
-		btia_helper(tree->right, tree->n + 1, max));
-	/* This is part of the BST check logic */
+	if (flag)
+	{
+		if (tree->n > n)
+		{
+			izq = num_check(tree->left, n, 1);
+			der = num_check(tree->right, n, 1);
+			if (izq && der)
+				return (1);
+		}
+	}
+	else
+		if (tree->n < n)
+		{
+			izq = num_check(tree->left, n, 0);
+			der = num_check(tree->right, n, 0);
+			if (izq && der)
+				return (1);
+		}
+	return (0);
 }
 
 /**
- * binary_tree_height - measures the height of a binary tree
- * @tree: tree to measure the height of
- *
- * Return: height of the tree
- *         0 if tree is NULL
- */
-size_t binary_tree_height(const binary_tree_t *tree)
+* binary_tree_is_bst - todo.
+* @tree: todo.
+* Return: todo.
+*/
+int binary_tree_is_bst(const binary_tree_t *tree)
 {
-	size_t height_l = 0;
-	size_t height_r = 0;
-
 	if (!tree)
 		return (0);
 
-	height_l = tree->left ? 1 + binary_tree_height(tree->left) : 0;
-	height_r = tree->right ? 1 + binary_tree_height(tree->right) : 0;
-	return (height_l > height_r ? height_l : height_r);
+	if (num_check(tree->left, tree->n, 0) && num_check(tree->right, tree->n, 1))
+		if (!tree->left || binary_tree_is_bst(tree->left))
+			if (!tree->right || binary_tree_is_bst(tree->right))
+				return (1);
+
+	return (0);
+}
+
+/**
+ * binary_tree_is_avl - checks if a binary tree is a valid AVL Tree.
+ * @tree: pointer to the root node of the tree to check.
+ * Return: 1 if tree is a valid AVL Tree, and 0 otherwise.
+ */
+int binary_tree_is_avl(const binary_tree_t *tree)
+{
+	return (binary_tree_is_bst(tree) && (binary_tree_is_complete(tree)));
 }

@@ -1,37 +1,70 @@
 #include "binary_trees.h"
+#include <stdio.h>
 
 /**
- * binary_tree_is_bst - checks if a binary tree is a valid Binary Search Tree
- * @tree: a pointer to the root node of the tree to check
+ * greater_than - check if all values in the tree are greater than a value
+ * @tree: pointer to the tree to check
+ * @val: value to check against
  *
- * Return: 1 if tree is a valid BST
- *         0 otherwise
+ * Return: 1 if true, 0 if false
  */
-int binary_tree_is_bst(const binary_tree_t *tree)
+int greater_than(const binary_tree_t *tree, int val)
 {
-	if (!tree)
-		return (0);
-	return (btib_helper(tree, INT_MIN, INT_MAX));
+	int l, r;
+
+	if (tree == NULL)
+		return (1);
+	if (tree->n > val)
+	{
+		l = greater_than(tree->left, val);
+		r = greater_than(tree->right, val);
+		if (l && r)
+			return (1);
+	}
+	return (0);
 }
 
 /**
- * btib_helper - checks if a binary tree is a valid Binary Search Tree
- * @tree: a pointer to the root node of the tree to check
- * @min: Lower bound of checked nored
- * @max: Upper bound of checked nodes
+ * less_than - check if all values in the tree are less than a specific value
+ * @tree: pointer to the tree to check
+ * @val: value to check against
  *
- * Return: 1 if tree is a valid BST
- *         0 otherwise
+ * Return: 1 if true, 0 if false
  */
-int btib_helper(const binary_tree_t *tree, int min, int max)
+int less_than(const binary_tree_t *tree, int val)
 {
-	if (!tree)
+	int l, r;
+
+	if (tree == NULL)
 		return (1);
+	if (tree->n < val)
+	{
+		l = less_than(tree->left, val);
+		r = less_than(tree->right, val);
+		if (l && r)
+			return (1);
+	}
+	return (0);
+}
 
-	if (tree->n < min || tree->n > max)
+/**
+ * binary_tree_is_bst - checks if a binary tree is a valid binary search tree
+ * @tree: pointer to the root node of the tree to check
+ *
+ * Return: 1 if tree is a valid BST, and 0 otherwise. If tree is NULL, return 0
+ */
+int binary_tree_is_bst(const binary_tree_t *tree)
+{
+	if (tree == NULL)
 		return (0);
+	if (less_than(tree->left, tree->n) && greater_than(tree->right, tree->n))
+	{
+		if (!tree->left || binary_tree_is_bst(tree->left))
+		{
+			if (!tree->right || binary_tree_is_bst(tree->right))
+				return (1);
+		}
 
-	return (btib_helper(tree->left, min, tree->n - 1) &&
-		btib_helper(tree->right, tree->n + 1, max));
-	/* -1 and +1 stem from "There must be no duplicate values" req */
+	}
+	return (0);
 }

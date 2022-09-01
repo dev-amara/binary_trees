@@ -1,14 +1,17 @@
 #include "binary_trees.h"
 
 /**
- * binary_tree_is_root - checks if a node is a root
- * @node: node to check
- *
- * Return: 1 if node is a root
- *         0 if not a root
- *         0 if node is NULL
+ * binary_tree_is_root - function that creates a binary tree node
+ * @node: pointer to the parent node of the node to create
+ * Return: pointer to the new node, or NULL on failure
  */
 int binary_tree_is_root(const binary_tree_t *node)
 {
-	return ((!node || node->parent) ? 0 : 1);
+	if (node == NULL)
+		return (0);
+
+	if (node->parent != NULL)
+		return (0);
+	else
+		return (1);
 }
